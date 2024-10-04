@@ -16,3 +16,5 @@ pipenv shell
 ```
 pip install -r requirements.txt
 ```
+### Access The Dashboard Link Below
+https://royalrumble3-data-analisis-bike-sharing-dashboard-mzdkxs.streamlit.app/
