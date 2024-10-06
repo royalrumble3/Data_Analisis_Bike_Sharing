@@ -3,10 +3,14 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import streamlit as st
 
+# Set page layout and title config first
+st.set_page_config(layout="wide")
+
 # Set style for seaborn
 sns.set(style='dark')
 
-st.title('Bike Sharing Dashboard')
+# Title of the page
+st.title("Bike Sharing Dashboard")
 
 # Loading data
 day_csv = 'https://raw.githubusercontent.com/royalrumble3/Data_Analisis_Bike_Sharing/main/datasets/day.csv'
@@ -16,9 +20,9 @@ day_df.set_index('dteday', inplace=True)
 
 # Sidebar for filter options
 with st.sidebar:
-    st.image(".\image\bike-svgrepo-com.svg")
-    st.sidebar.header("Filter:")
-    
+    st.image("https://raw.githubusercontent.com/royalrumble3/Data_Analisis_Bike_Sharing/refs/heads/main/image/bike-svgrepo-com.svg")
+    st.header("Filter:")
+
     # Date range filter
     min_date = day_df.index.min().date()
     max_date = day_df.index.max().date()
@@ -28,10 +32,9 @@ with st.sidebar:
         max_value=max_date,
         value=[min_date, max_date]
     )
-    
-    st.sidebar.header("Visit my Profile:")
+
+    st.header("Visit my Profile:")
     col1, col2 = st.sidebar.columns(2)
-    
     with col1:
         st.markdown("[![LinkedIn](https://content.linkedin.com/content/dam/me/business/en-us/amp/brand-site/v2/bg/LI-Bug.svg.original.svg)](https://www.linkedin.com/in/davidrianprabowo/)")
     with col2:
@@ -40,6 +43,24 @@ with st.sidebar:
 # Filtering data based on date selection
 filtered_df = day_df[(day_df.index >= pd.to_datetime(start_date)) & 
                      (day_df.index <= pd.to_datetime(end_date))]
+
+# New section: Displaying total daily rentals
+st.subheader('Daily Rentals')
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    daily_rent_registered = filtered_df['registered'].sum()
+    st.metric('Registered User', value=daily_rent_registered)
+
+with col2:
+    daily_rent_casual = filtered_df['casual'].sum()
+    st.metric('Casual User', value=daily_rent_casual)
+
+with col3:
+    daily_rent_total = filtered_df['cnt'].sum()  # 'cnt' is the total rides count in the dataset
+    st.metric('Total User', value=daily_rent_total)
+
+st.markdown('---')  # A divider line
 
 # Plotting functions
 def plot_daily_rentals(day_df):
@@ -63,15 +84,13 @@ def plot_seasonal_effect(day_df):
     ax.set_title('Seasonal Effect on Bike Rentals')
     return fig
 
-# Sidebar plot selection
-plot_selection = st.sidebar.selectbox('Select Visualization', ['Daily Rental Pattern', 'Seasonal Effect'])
+# Display plots directly in the main section
+st.subheader("Daily Rental Pattern")
+fig1 = plot_daily_rentals(filtered_df)
+st.pyplot(fig1)
 
-# Display plot based on selection
-if plot_selection == 'Daily Rental Pattern':
-    fig = plot_daily_rentals(filtered_df)
-    st.pyplot(fig)
-elif plot_selection == 'Seasonal Effect':
-    fig = plot_seasonal_effect(filtered_df)
-    st.pyplot(fig)
+st.subheader("Seasonal Effect on Bike Rentals")
+fig2 = plot_seasonal_effect(filtered_df)
+st.pyplot(fig2)
 
 st.caption('Copyright © NikoRiant')
