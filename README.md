@@ -32,5 +32,5 @@ cd dashboard
 streamlit run dashboard.py
 ```
 ### Access The Dashboard Link Below
-https://royalrumble3-data-analisis-bike-sharing-dashboard-mzdkxs.streamlit.app/
+https://dumtakdis.streamlit.app/
 
