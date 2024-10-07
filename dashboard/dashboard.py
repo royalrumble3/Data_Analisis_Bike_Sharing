@@ -10,7 +10,7 @@ st.set_page_config(layout="wide")
 sns.set(style='dark')
 
 # Title of the page
-st.title("Bike Sharing Dashboard")
+st.title("Bike Sharing Dashboard - Weather Impact Analysis")
 
 # Loading data
 day_csv = 'https://raw.githubusercontent.com/royalrumble3/Data_Analisis_Bike_Sharing/main/datasets/day.csv'
@@ -62,9 +62,9 @@ with col3:
 
 st.markdown('---')  # A divider line
 
-# Plotting functions
+
 def plot_daily_rentals(day_df):
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(8, 4))  # Adjusted size
     ax.plot(day_df.index, day_df['registered'], label='Registered')
     ax.plot(day_df.index, day_df['casual'], label='Casual')
     ax.set_title('Daily Bike Rentals (Registered vs Casual)')
@@ -77,7 +77,7 @@ def plot_daily_rentals(day_df):
 def plot_seasonal_effect(day_df):
     seasonal_data = day_df.groupby('season')['cnt'].mean()
     season_names = ['Spring', 'Summer', 'Fall', 'Winter']
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8, 4))  # Adjusted size
     ax.bar(season_names, seasonal_data)
     ax.set_xlabel('Season')
     ax.set_ylabel('Average Daily Rentals')
@@ -92,5 +92,30 @@ st.pyplot(fig1)
 st.subheader("Seasonal Effect on Bike Rentals")
 fig2 = plot_seasonal_effect(filtered_df)
 st.pyplot(fig2)
+
+
+
+# Menghitung jumlah pengguna saat holiday, workingday, dan weekday
+total_holiday_users = day_df.loc[day_df['holiday'] == 1, 'cnt'].sum()
+total_workingday_users = day_df.loc[day_df['workingday'] == 1, 'cnt'].sum()
+total_weekday_users = day_df.loc[(day_df['holiday'] == 0) & (day_df['workingday'] == 0), 'cnt'].sum()
+
+# Membuat DataFrame
+data = {'Day Type': ['Holiday', 'Working Day', 'Weekday'],
+        'Total Users': [total_holiday_users, total_workingday_users, total_weekday_users]}
+day_type_df = pd.DataFrame(data)
+
+# Menampilkan DataFrame in Streamlit
+st.subheader("Total Users Based on Day Type")
+st.dataframe(day_type_df)
+
+# Plotting User Count by Day Type
+st.subheader("Comparison of User Count by Day Type")
+plt.figure(figsize=(8, 5))
+sns.barplot(x='Day Type', y='Total Users', data=day_type_df, palette='Set2')
+plt.xlabel("Day Type")
+plt.ylabel("Total Users")
+plt.title("User Count Comparison Based on Day Type")
+st.pyplot(plt)
 
 st.caption('Copyright © NikoRiant')
